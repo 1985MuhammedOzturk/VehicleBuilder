@@ -1,0 +1,51 @@
+<project name="Lab1" basedir="." default="test">
+    <!-- Project Properties -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="test.dir" value="test"/>
+    <property name="lib.dir" value="lib"/>
+
+    <!-- Classpath -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- Clean Target -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compile Target -->
+    <target name="compile">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath"/>
+    </target>
+
+    <!-- Compile Test Target -->
+    <target name="compile-test" depends="compile">
+        <mkdir dir="${build.dir}/test/classes"/>
+        <javac srcdir="${test.dir}" destdir="${build.dir}/test/classes" classpathref="classpath"/>
+    </target>
+
+    <!-- Test Target -->
+    <target name="test" depends="compile-test">
+        <junit printsummary="true">
+            <classpath>
+                <pathelement path="${build.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+            <batchtest todir="${build.dir}/test/results">
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- Default Target -->
+    <target name="all" depends="clean, test"/>
+</project>
